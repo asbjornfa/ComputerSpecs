@@ -1,7 +1,10 @@
 import platform
 import socket
+import GPUtil
 import cpuinfo
 import psutil
+
+
 
 class Computer:
     def __init__(self):
@@ -13,6 +16,7 @@ class Computer:
         self.processor = cpuinfo.get_cpu_info()['brand_raw']
         self.memory = round(psutil.virtual_memory().total / (1024 ** 3))
         self.disk = round(psutil.disk_usage('/').total / (1024 ** 3))
+        self.gpu = GPUtil.getGPUs()
         self.ram_used = round(psutil.virtual_memory().used / (1024 ** 3))
         self.disk_used = round(psutil.disk_usage('/').used / (1024 ** 3))
 
@@ -27,7 +31,12 @@ class Computer:
         print("Disk: %s" % self.disk + " GiB")
         print(" ")
         print("--- GPU ---")
-        print("No GPU")
+        if not self.gpu:
+            print("No GPU available")
+        else:
+            for gpus in self.gpu:
+                print(f"GPU name: {gpus.name}")
+
         print(" ")
         print("--- RAM & Disk usage ---")
         print("RAM used: " + str(self.ram_used) + " GiB" + " / " + str(self.memory) + " GiB")
